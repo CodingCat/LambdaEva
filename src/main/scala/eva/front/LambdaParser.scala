@@ -1,24 +1,24 @@
 package eva.front
 
-import eva.front.Encoding.CurryNumber
-
+import scala.util.parsing.combinator.PackratParsers
 import scala.util.parsing.combinator.lexical.StdLexical
-import scala.util.parsing.combinator.{PackratParsers, JavaTokenParsers}
 import scala.util.parsing.combinator.syntactical.StdTokenParsers
 
 import eva.ast._
+import eva.front.Encoding.CurryNumber
 
 class LambdaParser extends StdTokenParsers with PackratParsers {
 
   override type Tokens = StdLexical
 
   override val lexical: Tokens = new LambdaLexer
+  lexical.delimiters ++= Seq("\\", "L", ".", "(", ")", "=", ";")
 
   type P[+T] = PackratParser[T]
 
   lazy val expr: P[Expr]         = application | notApp
   lazy val notApp                = variable | number | parens | lambda
-  lazy val lambda: P[Lambda]     = positioned(("λ" | "\\") ~> variable ~ "." ~ expr ^^
+  lazy val lambda: P[Lambda]     = positioned(("L" | "\\") ~> variable ~ "." ~ expr ^^
     { case v ~ "." ~ e  => Lambda(v, e) })
   lazy val application: P[Apply] = positioned(expr ~ notApp ^^
     { case left ~ right => Apply(left, right) })

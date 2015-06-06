@@ -1,6 +1,6 @@
 package eva.front
 
-import eva.ast.{Lambda, Apply, Var, Expr}
+import eva.ast.{Apply, Expr, Lambda, Var}
 
 object Encoding {
 
